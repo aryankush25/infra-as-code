@@ -24,3 +24,9 @@ resource "aws_vpc" "main" {
 
 # To get the VPC ID
 # aws ec2 describe-vpcs --region ap-southeast-2 --filters Name=tag:Name,Values=iac-lab-aryan
+
+# To create a VPC using CloudFormation
+# aws cloudformation create-stack --stack-name iac-lab-cfn-yaml-aryan --template-body file://./cloudformation_template.yaml
+
+# To delete a VPC using CloudFormation
+# aws cloudformation delete-stack --stack-name iac-lab-cfn-yaml-aryan
