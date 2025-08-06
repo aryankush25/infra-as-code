@@ -1,29 +1,16 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "5.40.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = "ap-southeast-2"
-}
-
 resource "aws_vpc" "main" {
-  cidr_block           = "192.168.1.0/25"
+  cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
   instance_tenancy     = "default"
-  
+
   tags = {
-    Name = "iac-lab-aryan"
+    Name = "${var.prefix}-vpc"
   }
 }
 
 # To get the VPC ID
-# aws ec2 describe-vpcs --region ap-southeast-2 --filters Name=tag:Name,Values=iac-lab-aryan
+# aws ec2 describe-vpcs --region ap-southeast-2 --filters Name=tag:Name,Values=aryan-iac-lab-vpc
 
 # To create a VPC using CloudFormation
 # aws cloudformation create-stack --stack-name iac-lab-cfn-yaml-aryan --template-body file://./cloudformation_template.yaml
