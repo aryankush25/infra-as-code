@@ -107,6 +107,56 @@ resource "aws_nat_gateway" "main_nat" {
   depends_on = [aws_internet_gateway.main_igw]
 }
 
+# Public Route Table
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main_igw.id
+  }
+
+  tags = {
+    Name = format("%s-public-route-table", var.prefix)
+  }
+}
+
+# Private Route Table
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main_nat.id
+  }
+
+  tags = {
+    Name = format("%s-private-route-table", var.prefix)
+  }
+}
+
+# Route Table Associations - Public Subnets
+resource "aws_route_table_association" "public_subnet_1_association" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "public_subnet_2_association" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+# Route Table Associations - Private Subnets
+resource "aws_route_table_association" "private_subnet_1_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_subnet_2_association" {
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
 # To get the VPC ID
 # aws ec2 describe-vpcs --region ap-southeast-2 --filters Name=tag:Name,Values=aryan-iac-lab-vpc
 
